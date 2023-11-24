@@ -1,3 +1,5 @@
+pub mod tui;
+
 use std::{iter::Iterator, future::Future, task::Poll};
 use anyhow::Result;
 use tokio::time::{Instant, Interval};
