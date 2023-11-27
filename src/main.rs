@@ -1,9 +1,12 @@
 pub mod tui;
-
+pub mod app;
 use std::{iter::Iterator, future::Future, task::Poll};
-use anyhow::Result;
+//use anyhow::Result;
+use color_eyre::eyre::{eyre, Result};
+use app::App;
 use tokio::time::{Instant, Interval};
-
+use tui::Tui;
+use ratatui::{backend::CrosstermBackend as Backend};
 struct Spinner {
     m_spinner   : Vec<char>,
     m_iter      : usize,
@@ -61,8 +64,36 @@ impl Default for Spinner {
 // }
 // https://github.com/tokio-rs/tokio/blob/master/tokio/src/time/interval.rs
 // https://docs.rs/tokio/latest/tokio/time/struct.Sleep.html
+
+
+
 #[tokio::main]
 async fn main() -> Result<()> {
+
+    let mut app = App::new();
+    let mut tui = Tui::new()?;
+    tui.enter()?; // >>> tui.start()
+
+
+
+    loop {
+        tui.terminal.draw(|f| app.ui(f))?;
+        // let event = tui.next().await.ok_or(eyre!("Unable to get event"))?; // blocks until next event (e.g. keystroke or tick)
+        // let message = self.handle_event(event)?;
+        // self.update(message)?; // Update App state
+      }
+      tui.exit()?;
+      //Ok(())
+
+
+
+
+
+
+
+
+
+
     let mut spinner: Spinner = Spinner::default();
 
     //let mut spin: char = spinner.await;
@@ -77,12 +108,12 @@ async fn main() -> Result<()> {
     let mut interval = tokio::time::interval(tick_rate);
 
     loop {
-        //let delay = interval.tick(); // ticker() returns a future to wait on
-        let delay = spinner.tick(); // ticker() returns a future to wait on
+        let delay = interval.tick(); // ticker() returns a future to wait on
+        //let delay = spinner.tick(); // ticker() returns a future to wait on
 
         tokio::select! {
             _ = delay => {
-                //println!("tick");
+                println!("tick");
             }
         }
     }
