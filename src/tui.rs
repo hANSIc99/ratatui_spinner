@@ -40,8 +40,8 @@ impl Tui {
     Ok(Self { terminal, task, cancellation_token, event_rx, event_tx })
   }
 
-  pub async fn next(&mut self) -> Option<Event> {
-    self.event_rx.recv().await
+  pub async fn next(&mut self) -> Result<Event> {
+    self.event_rx.recv().await.ok_or(eyre!("Unable to get event"))
   }
   
   pub fn enter(&mut self) -> Result<()> {
@@ -80,7 +80,7 @@ impl Tui {
   }
 
   pub fn start(&mut self) {
-    let tick_rate = std::time::Duration::from_millis(60);
+    let tick_rate = std::time::Duration::from_millis(500);
     self.cancel();
     self.cancellation_token = tokio_util::sync::CancellationToken::new();
     let _cancellation_token = self.cancellation_token.clone();
