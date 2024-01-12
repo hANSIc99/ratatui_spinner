@@ -10,7 +10,7 @@ use tui::Tui;
 use ratatui::{backend::CrosstermBackend as Backend};
 
 
-
+// Fix for VsCode https://stackoverflow.com/questions/75926539/unicode-not-showing-properly-in-git-bash-when-debugging-in-visual-studio-code
 
 // impl Future for Spinner {
 //     type Output = char;

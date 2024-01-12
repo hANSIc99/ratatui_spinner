@@ -20,6 +20,7 @@
                 }
             },
             "args": [],
+            //"console": "externalTerminal",
             "cwd": "${workspaceFolder}"
         },
         {

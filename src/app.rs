@@ -14,6 +14,7 @@ pub enum Message {
 pub struct App {
     counter: i64,
     spinner: Spinner,
+    state : String,
     pub should_quit: bool,
     //action_tx: UnboundedSender<Action>,
 }
@@ -22,26 +23,46 @@ impl App {
     pub fn new() -> Self {
       Self {
         counter : 0,
+        state   : String::from("Idling"),
         spinner : Spinner::default(),
         should_quit : false
       }
     }
 
-    pub fn ui(&mut self, f: &mut Frame<'_>) {
-      let area = f.size();
-      f.render_widget(
-        Paragraph::new(format!("Spinner!.\n\n{}", self.spinner.next().unwrap_or(' '),))
-          .block(
-            Block::default()
-              .title("ratatui async counter app")
-              .title_alignment(Alignment::Center)
-              .borders(Borders::ALL)
-              .border_type(BorderType::Rounded),
-          )
-          .style(Style::default().fg(Color::Cyan))
-          .alignment(Alignment::Center),
-        area,
-      );
+    pub fn ui(&mut self, frame: &mut Frame<'_>) {
+      // https://ratatui.rs/concepts/layout/
+      let area = frame.size();
+      let layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![
+            Constraint::Min(1),
+            Constraint::Max(3),
+        ])
+        .split(frame.size());
+      
+      frame.render_widget(
+        Paragraph::new("Top")
+            .block(Block::new().borders(Borders::ALL)),
+        layout[0]);
+
+      frame.render_widget(
+          Paragraph::new(format!("{} State: {}", self.spinner.next().unwrap_or(' '), self.state) )
+              .block(Block::new().borders(Borders::ALL)),
+          layout[1]);
+
+      // f.render_widget(
+      //   Paragraph::new(format!("Spinner!.\n\n{}", self.spinner.next().unwrap_or(' '),))
+      //     .block(
+      //       Block::default()
+      //         .title("ratatui async counter app")
+      //         .title_alignment(Alignment::Left)
+      //         .borders(Borders::ALL)
+      //         .border_type(BorderType::Rounded),
+      //     )
+      //     .style(Style::default().fg(Color::Cyan))
+      //     .alignment(Alignment::Center),
+      //   area,
+      // );
     }
 
     pub fn handle_event(&self, event: Event) -> Result<Message> {
